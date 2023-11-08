@@ -1,0 +1,365 @@
+﻿@model web_blog.Models.UserViewModels.IndexViewModel
+@using PagedList.Core.Mvc
+@using web_blog.Data;
+
+@{
+    int numberPage = (int)ViewBag.NumberOfPages;
+    Filter filter = (Filter)ViewBag.Filter;
+
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <a asp-controller="User" asp-action="Index"><h5>Dashboard</h5></a>
+            </div>
+           
+        </div>
+    </div>
+</section>
+<div class="content">
+    <div class="card">
+        <div class="col-md-10 offset-md-1">
+            <form asp-controller="User" asp-action="Index">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="formControlSelect1">Category</label>
+                                <select class="form-control" id="formControlSelect1" name="categoryId">
+                                    <option value="">-- All --</option>
+                                    @foreach (var item in (List<web_blog.Data.Category>)ViewBag.Categories)
+                                    {
+                                        if (@item.Id == filter.categoryId)
+                                        {
+                                            <option value="@item.Id" selected>@item.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="formControlSelect2">Author</label>
+                                <select class="form-control" id="formControlSelect2" name="authorId">
+                                    <option value="">-- All --</option>
+                                    @foreach (var item in (List<web_blog.Data.ApplicationUser>)ViewBag.Users)
+                                    {
+                                        if (@item.Id == filter.authorId)
+                                        {
+                                            <option value="@item.Id" selected>@item.FirstName @item.LastName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Id">@item.FirstName @item.LastName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="formControlSelect3">Publish</label>
+                                <select class="form-control" id="formControlSelect3" name="publish">
+                                    <option value="">-- All --</option>
+                                    @if (filter.publish == "published")
+                                    {
+                                        <option value="published" selected>Published</option>
+                                        <option value="unPublished">Un-Published</option>
+                                    }
+                                    else if (filter.publish == "unPublished")
+                                    {
+                                        <option value="published">Published</option>
+                                        <option value="unPublished" selected>Un-Published</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="published">Published</option>
+                                        <option value="unPublished">Un-Published</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="formControlSelect4">OrderBy</label>
+                                <select class="form-control" id="formControlSelect4" name="orderBy">
+                                    @if (filter.orderBy == "title")
+                                    {
+                                        <option value="date">Date</option>
+                                        <option value="title" selected>Title</option>
+                                       
+                                    }
+                                    else if (filter.orderBy == "date")
+                                    {
+                                        <option value="title">Title</option>
+                                        <option value="date" selected>Date</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="date">Title</option>
+                                        <option value="title">Date</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="formControlSelect3">SortOrder</label>
+                                <select class="form-control" id="formControlSelect3" name="sortOrder">
+                                    @if (filter.sortOrder == "asc")
+                                    {
+                                        <option value="asc" selected>ASC</option>
+                                        <option value="desc">DESC</option>
+                                    }
+                                    else if (filter.sortOrder == "desc")
+                                    {
+                                        <option value="asc">ASC</option>
+                                        <option value="desc" selected>DESC</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="desc">DESC</option>
+                                        <option value="asc">ASC</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-block btn-primary ml-5 mt-4">Filter</button>
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <div class="form-group">
+                                        <a class="btn btn-primary ml-5 mt-4" asp-action="Index" asp-controller="User" role="button">Clear</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <hr />
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <form asp-controller="User" asp-action="Index">
+                <div class="card-header">
+                    <h3 class="card-title">Post Table</h3>
+                    <div class="card-tools">
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                                <input asp-for="SearchString" type="text" value="@Model.SearchString" class="form-control float-right" placeholder="Search">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-default">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                </form>
+
+                <div id="searchResults">
+                    <div class="card-body table-responsive p-0" style="height: 300px;">
+                        <table class="table table-head-fixed text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Date</th>
+                                    <th>Creator</th>
+                                    <th>Pulished</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var post in Model.Posts)
+                                {
+                                    <tr>
+                                        <td>@post.Id</td>
+                                        <td style="max-width: 200px;
+                                            overflow: hidden;
+                                            text-overflow: ellipsis;">
+                                            @post.Title
+                                        </td>
+                                        <td>@post.UpdatedOn</td>
+                                        <td>@post.Creator</td>
+                                        <td class="jsgrid-cell jsgrid-align-center" style="width: 100px;">
+                                            <input type="checkbox"
+                                                   data-id="@post.Id"
+                                                   data-value="@(post.Published ? "true" : "false")"
+                                                   data-toggle="modal"
+                                                   data-target="#publishModal"
+                                            @(post.Published ? "checked" : "")>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-info">Action</button>
+                                                <button type="button" class="btn btn-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <div class="dropdown-menu" role="menu" style="">
+                                                    <a class="dropdown-item" asp-controller="User" asp-action="GetPost" asp-route-id="@post.Id">View</a>
+                                                    <a class="dropdown-item" asp-controller="User" asp-action="EditPost" asp-route-id="@post.Id">Edit</a>
+                                                    <a class="dropdown-item" data-id="@post.Id" data-toggle="modal" data-target="#deleteModal">Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer clearfix">
+                        <nav aria-label="Pagination">
+                            <ul class="pagination justify-content-center my-4">
+                                <li class="page-item @((Model.PageNumber == 1) ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", "User", new {searchString = Model.SearchString, page = Model.PageNumber - 1, categoryId = filter.categoryId, authorId = filter.authorId, publish = filter.publish, sortOrder = filter.sortOrder, orderBy = filter.orderBy })" tabindex="-1" aria-disabled="@(Model.PageNumber == 1)">Prev</a>
+                                </li>
+
+                                @for (int i = 1; i <= numberPage; i++)
+                                {
+                                    if (i == 1 || i == numberPage || (i >= Model.PageNumber - 1 && i <= Model.PageNumber + 1))
+                                    {
+                                        <li class="page-item @(i == Model.PageNumber ? "active" : "")" aria-current="page">
+                                            <a class="page-link" href="@Url.Action("Index", "User", new {searchString = Model.SearchString, page = i, categoryId = filter.categoryId, authorId = filter.authorId, publish = filter.publish, sortOrder = filter.sortOrder, orderBy = filter.orderBy   })">@i</a>
+                                        </li>
+                                    }
+                                    else if ((i == Model.PageNumber - 2) || (i == Model.PageNumber + 2))
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">...</a>
+                                        </li>
+                                    }
+                                }
+                                <li class="page-item @((Model.PageNumber == numberPage) ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", "User", new {searchString = Model.SearchString, page = Model.PageNumber + 1, categoryId = filter.categoryId, authorId = filter.authorId, publish = filter.publish, sortOrder = filter.sortOrder, orderBy = filter.orderBy  })">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal delete -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Do you want to delete post?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" id="btnDelete">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal publish -->
+<div class="modal fade" id="publishModal" tabindex="-1" aria-labelledby="publishModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="publishModalLabel">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Do you want to publish post?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" id="btnPublish">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+
+        // modal delete
+        $(document).on('click', 'a[data-id]', function (e) {
+            var id = $(this).attr('data-id');
+
+            var confirmDelete = document.getElementById("btnDelete");
+            confirmDelete.addEventListener("click", function () {
+                $('#deleteModal').modal('hide');
+                $.post("/User/DeletePost", { id: id }, function () {
+                    window.location.reload(true);
+                });
+            });
+
+        });
+
+
+        // modal publish
+        $(document).on('click', 'input[data-id]', function (e) {
+            var id = $(this).attr('data-id');
+            var value = $(this).attr('data-value');
+
+            var confirmApprove = document.getElementById("btnPublish");
+            confirmApprove.addEventListener("click", function () {
+                $('#publishModal').modal('hide');
+
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: '/User/Published',
+                    data: { postId: id, check: value },
+                    success: function () {
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    }
+                });
+            });
+        });
+
+        
+
+
+    </script>
+}
+
+
+
+
+
+
+

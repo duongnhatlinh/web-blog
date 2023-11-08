@@ -1,0 +1,34 @@
+﻿#titleError, #fileError, #contentError, #selectError {
+    display: none;
+    font-size: 1em;
+}
+
+#titleError.visible {
+        display: block;
+        color: red;
+}
+
+#fileError.visible {
+    display: block;
+    color: red;
+}
+
+#contentError.visible {
+    display: block;
+    color: red;
+}
+
+#selectError.visible {
+    display: block;
+    color: red;
+}
+
+
+input.invalid {
+    border-color: red;
+}
+
+textarea.invalid {
+    border-color: red;
+}
+

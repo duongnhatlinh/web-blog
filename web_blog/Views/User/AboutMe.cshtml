@@ -1,0 +1,123 @@
+﻿@model web_blog.Models.UserViewModels.AboutViewModel
+@{
+	ViewData["HeaderImage"] = $"../../UserFiles/Posts/40/HeaderImage.jpg";
+
+}
+
+<section class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h5 class="breadcrumb-item active">
+					<a asp-controller="User" asp-action="Index">Dashboard</a>
+					<span class="breadcrumb-separator">/</span>
+					Profile
+				</h5>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-6">
+
+				<div class="card card-primary card-outline">
+					<div class="card-body box-profile">
+						<div class="text-center">
+							<img src="@ViewData["HeaderImage"]" style="width:160px; height:160px; border-radius: 50%;" alt="User profile picture">
+						</div>
+						<h3 class="profile-username text-center">@Model.User.FirstName @Model.User.LastName</h3>
+						<p class="text-muted text-center">@Model.User.Job</p>
+						
+
+						<strong><i class="fas fa-book mr-1"></i> Education</strong>
+						<p class="text-muted">
+							@Model.User.Education
+						</p>
+						<hr>
+						<strong><i class="fas fa-map-marker-alt mr-1"></i> Location</strong>
+						<p class="text-muted">@Model.User.Location</p>
+						<hr>
+						<strong><i class="fas fa-pencil-alt mr-1"></i> Skills</strong>
+						<p class="text-muted">
+							@Model.User.Skills
+						</p>
+						<hr>
+						<strong><i class="far fa-file-alt mr-1"></i> Notes</strong>
+						<p class="text-muted">@Model.User.Notes</p>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="col-md-6">
+				<div class="card card-primary">
+					<div class="card-header">
+						<h3 class="card-title">Edit Profile</h3>
+					</div>
+					    <form id="createForm" asp-controller="User" asp-action="EditProfile" method="post" enctype="multipart/form-data">
+					<div class="card-body">
+						<div class="form-group">
+								<label asp-for="ProfileImage">File input</label>
+							<div class="custom-file">
+									<input asp-for="ProfileImage" name="HeaderImage" class="custom-file-input" accept="image/*" id="InputFileUser">
+									<label class="custom-file-label" asp-for="ProfileImage">Choose file</label>
+								<span role="alert" id="fileError" aria-hidden="true"> Please choose file </span>
+							</div>
+						</div>
+						<div class="form-group">
+								<label asp-for="@Model.User.Job">Job</label>
+								<input asp-for="@Model.User.Job" class="form-control" id="title" />
+								<span class="text-danger" asp-validation-for="@Model.User.Job"></span>
+							<span role="alert" id="titleError" aria-hidden="true"> Please enter job </span>
+						</div>
+						<div class="form-group">
+								<label asp-for="@Model.User.Education">Education</label>
+								<input asp-for="@Model.User.Education" class="form-control" id="title" />
+								<span asp-validation-for="@Model.User.Education" class="text-danger"></span>
+							<span role="alert" id="titleError" aria-hidden="true"> Please enter education </span>
+						</div>
+						<div class="form-group">
+								<label asp-for="@Model.User.Location">Location</label>
+								<input asp-for="@Model.User.Location" class="form-control" id="title" />
+								<span asp-validation-for="@Model.User.Location" class="text-danger"></span>
+							<span role="alert" id="titleError" aria-hidden="true"> Please enter location </span>
+						</div>
+						<div class="form-group">
+								<label asp-for="@Model.User.Skills">Skills</label>
+								<input asp-for="@Model.User.Skills" class="form-control" id="title" />
+								<span asp-validation-for="@Model.User.Skills" class="text-danger"></span>
+							<span role="alert" id="titleError" aria-hidden="true"> Please enter skills </span>
+						</div>
+						<div class="form-group">
+								<label asp-for="@Model.User.Notes">Notes</label>
+								<textarea id="inputDescription" asp-for="@Model.User.Notes" class="form-control" rows="4"></textarea>
+								<span asp-validation-for="@Model.User.Notes" class="text-danger"></span>
+							<span role="alert" id="contentError" aria-hidden="true"> Please enter notes </span>
+						</div>
+						<div class="card-footer">
+								<button class="btn btn-primary" type="submit">Button</button>
+						</div>
+					</div>
+					</form>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+</section>
+
+@section Scripts {
+<script>
+		// InputFileUser
+		document.getElementById("InputFileUser").addEventListener("change", function (e) {
+			var fileName = e.target.files[0].name;
+			var nextSibling = e.target.nextElementSibling;
+			nextSibling.innerText = fileName;
+		});
+</script>
+}

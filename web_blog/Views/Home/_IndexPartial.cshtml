@@ -1,0 +1,74 @@
+﻿@model web_blog.Models.HomeViewModels.IndexViewModel
+@using PagedList.Core.Mvc
+@using web_blog.Data;
+
+@{
+    Layout = "_Layout";
+    int numberPage = (int)ViewBag.NumberOfPages;
+    Filter filter = (Filter)ViewBag.Filter;
+}
+
+<div class="col-lg-8" id="filteredDataContainer">
+    <div class="all-blog-posts">
+        <div class="row">
+             @foreach (var post in Model.Posts)
+            {
+                <div class="col-lg-6">
+                    <div class="blog-post">
+						<div class="blog-thumb">
+                            <a asp-controller="Home" asp-action="GetPost" asp-route-id="@post.Id"><img src="~/userfiles/posts/@post.Id/headerimage.jpg" class="img-fluid" style="height:300px;object-fit: cover;" alt="image post" /></a>
+                        </div>
+                        <div class="down-content" >
+                            <span>@post.Category.Name</span>
+                            <a asp-controller="Home" asp-action="GetPost" asp-route-id="@post.Id">
+                                <h4 style="height:80px;word-wrap: break-word;">
+                                @post.Title
+                                </h4>
+                            </a>
+                            <ul class="post-info">
+                                <li><a href="#">@post.Creator.FirstName @post.Creator.LastName</a></li>
+                                <li><a href="#">@post.CreatedOn.ToString("MMMM d, yyyy hh:mm tt")</a></li>
+                                <li><a href="#">@post.Comments.Count() Comments</a></li>
+                            </ul>
+                            
+                        </div>
+                    </div>
+                </div>
+            }
+
+  
+
+            <!-- phaan trang -->
+            <div class="col-lg-12">
+                <nav aria-label="Pagination">
+                    <ul class="pagination justify-content-center my-4">
+                        <li class="page-item @((Model.PageNumber == 1) ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Home", new {searchString = Model.SearchString, page = Model.PageNumber - 1, categoryId = filter.categoryId, authorId = filter.authorId, sortOrder = filter.sortOrder, orderBy = filter.orderBy })" tabindex="-1" aria-disabled="@(Model.PageNumber == 1)">Prev</a>
+                        </li>
+
+                        @for (int i = 1; i <= numberPage; i++)
+                        {
+                            if (i == 1 || i == numberPage || (i >= Model.PageNumber - 1 && i <= Model.PageNumber + 1))
+                            {
+                                <li class="page-item @(i == Model.PageNumber ? "active" : "")" aria-current="page">
+                                    <a class="page-link" href="@Url.Action("Index", "Home", new {searchString = Model.SearchString, page = i, categoryId = filter.categoryId, authorId = filter.authorId, sortOrder = filter.sortOrder, orderBy = filter.orderBy   })">@i</a>
+                                </li>
+                            }
+                            else if ((i == Model.PageNumber - 2) || (i == Model.PageNumber + 2))
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">...</a>
+                                </li>
+                            }
+                        }
+                        <li class="page-item @((Model.PageNumber == numberPage) ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Home", new {searchString = Model.SearchString, page = Model.PageNumber + 1, categoryId = filter.categoryId, authorId = filter.authorId, sortOrder = filter.sortOrder, orderBy = filter.orderBy  })">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+
+        </div>
+    </div>
+</div>

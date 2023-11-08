@@ -1,0 +1,173 @@
+﻿@using System.Web
+@model web_blog.Models.PostViewModels.PostViewModel
+@{
+    Layout = "_LayoutHome";
+    ViewData["HeaderImage"] = $"../../UserFiles/Posts/{Model.Post.Id}/HeaderImage.jpg";
+    ViewData["HeaderTitle"] = Model.Post.Title;
+    ViewData["AuthorName"] = $"{Model.Post.Creator.FirstName} {Model.Post.Creator.LastName}";
+    ViewData["PostDate"] = Model.Post.UpdatedOn.ToString("MMMM d, yyyy");
+}
+
+<div class="col-lg-8">
+    <div class="all-blog-posts">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="blog-post">
+                    <div class="down-content">
+                        <span>@Model.Post.Category.Name</span>
+                        <a asp-controller="User" asp-action="GetPost" asp-route-id="@Model.Post.Id">
+                            <h4 style="height:80px;word-wrap: break-word;">
+                                @ViewData["HeaderTitle"]
+                            </h4>
+                        </a>
+                        <ul class="post-info">
+                            <li><a href="#">@ViewData["AuthorName"]</a></li>
+                            <li><a href="#">@ViewData["PostDate"]</a></li>
+                            <li><a href="#">@Model.Post.Comments.Count() Comments</a></li>
+                        </ul>
+                        <p>
+                            @Html.Raw(HttpUtility.HtmlDecode(Model.Post.Content))
+                        </p>
+                        <div class="post-options">
+                            <div class="row">
+                                <div class="col-6">
+                                    <ul class="post-tags">
+                                        <li><i class="fa fa-tags"></i></li>
+                                        <li><a href="#">Best Templates</a>,</li>
+                                        <li><a href="#">TemplateMo</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    <ul class="post-share">
+                                        <li><i class="fa fa-share-alt"></i></li>
+                                        <li><a href="#">Facebook</a>,</li>
+                                        <li><a href="#"> Twitter</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+@*                <div class="sidebar-item comments">
+*@                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <h3 class="mb-5">@Model.Post.Comments.Count() Comments</h3>
+                        <ul class="comment-list  comment-top" list="@Model.Post.Comments" count="0">
+                            @foreach (var comment in Model.Post.Comments.Where(comment => comment.Parent is null))
+                            {
+                                <li class="comment" style="margin-top: 30px;">
+                                    <div class="comment-body">
+                                        <h4 class="commenter-name">@comment.Author.FirstName @comment.Author.LastName</h4>
+                                        <div class="comment-date">@comment.CreatedOn.ToString("MMMM d, yyyy hh:mm tt")</div>
+                                        <p class="comment-message">@comment.Content</p>
+                                        @if (!User.Identity.IsAuthenticated)
+                                        {
+                                            <a class="reply-btn btn" asp-area="Identity" asp-page="/Account/Login" asp-route-ReturnUrl="~/GetPost/@Model.Post.Id">Login to reply</a>
+                                        }
+                                        else
+                                        {
+                                            <a aria-expanded="false" href="@($"#replyComment{comment.Id}")" data-toggle="collapse" class="reply-btn btn">Reply</a>
+                                        }
+                                    </div>
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <div class="collapse" id="@($"replyComment{comment.Id}")">
+                                            <form asp-controller="Home" asp-action="Comment">
+                                                <input asp-for="Post.Id" readonly hidden />
+                                                <input asp-for="Comment.Parent.Id" value="@comment.Id" readonly hidden />
+                                                <div class="form-group">
+                                                    <label for="comment">Write a reply</label>
+                                                    <textarea asp-for="Comment.Content" class="form-control" rows="3"></textarea>
+                                                    <button type="submit" class="btn btn-outline-primary post-btn">Post</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    }
+                                    <ul class="comment-list" list="@comment.Comments" count="0" style="margin-left: 30px; margin-top:0;">
+                                        @foreach (var reply in comment.Comments)
+                                        {
+                                            <li class="comment">
+                                                <div class="comment-body">
+                                                    <h3 class="commenter-name">@reply.Author.FirstName @reply.Author.LastName</h3>
+                                                    <div class="comment-date">@reply.CreatedOn.ToString("MMMM d, yyyy hh:mm tt")</div>
+                                                    <p class="comment-message">@reply.Content</p>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div>
+                                <form asp-controller="Home" asp-action="Comment">
+                                    <input asp-for="Post.Id" readonly hidden />
+                                    <div class="form-group">
+                                        <label for="comment">Comment</label>
+                                        <textarea asp-for="Comment.Content" class="form-control" rows="3" required></textarea>
+                                        <button type="submit" class="btn btn-outline-primary post-btn">Post</button>
+                                    </div>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            <a class="reply-btn btn" asp-area="Identity" asp-page="/Account/Login" asp-route-ReturnUrl="~/GetPost/@Model.Post.Id">Login to Comment on this Post</a>
+                        }
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    @*</div>*@
+</div>
+<div class="col-lg-4">
+    <div class="sidebar">
+        <div class="row">
+           
+            <div class="col-lg-12">
+                <div class="sidebar-item recent-posts">
+                    <div class="sidebar-heading">
+                        <h2>Recent Posts</h2>
+                    </div>
+                    <div class="content">
+                        <ul>
+                            @foreach (var post in (List<web_blog.Data.Post>)ViewBag.Posts)
+                            {
+                                <li>
+                                    <a asp-controller="Home" asp-action="GetPost" asp-route-id="@post.Id">
+                                        <h5 class="word-wrap: break-word;">@post.Title</h5>
+                                        <span>@post.CreatedOn.ToString("MMMM d, yyyy hh:mm tt")</span>
+                                    </a>
+                                </li>
+
+                            }
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+
+                <div class="sidebar-item categories">
+                    <div class="sidebar-heading">
+                        <h2>Categories</h2>
+                    </div>
+                    <div class="content">
+                        <ul>
+                            @foreach (var user in (List<web_blog.Data.ApplicationUser>)ViewBag.Users)
+                            {
+
+                                <li><a href="#">@user.FirstName @user.LastName</a></li>
+                            }
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

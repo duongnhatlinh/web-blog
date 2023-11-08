@@ -1,0 +1,201 @@
+﻿@model web_blog.Models.HomeViewModels.IndexViewModel
+@using web_blog.Data;
+
+
+@{
+    Filter filter = (Filter)ViewBag.Filter;
+}
+<div class="col-lg-4">
+    <div class="sidebar">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="sidebar-item search">
+                    <form id="search_form" asp-controller="Home" asp-action="Index">
+                        <input asp-for="SearchString" class="searchText" placeholder="type to search..." autocomplete="on">
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card card-secondary">
+    
+                    <div class="card-header text-dark bg-light " data-toggle="collapse" data-target="#budgetCard">
+ 
+                            <h5>Filter</h5>
+                    </div>
+                    <form asp-controller="Home" asp-action="Index" id="FilterUser">
+                    <div id="budgetCard" class="collapse show">
+                        <!-- "show" để mặc định hiển thị -->
+                        <div class="card-body">
+                            <div class="form-group">
+                                   <label for="filterUserCategory">Category</label>
+                                    <select class="form-control" id="filterUserCategory" name="categoryId">
+                                    <option value="">-- All --</option>
+                                    @foreach (var item in (List<web_blog.Data.Category>)ViewBag.Categories)
+                                    {
+                                        if (@item.Id == filter.categoryId)
+                                        {
+                                            <option value="@item.Id" selected>@item.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
+                                    }
+                                </select>
+                             </div>
+                            <div class="form-group">
+                                <label for="filterUserAuthor">Author</label>
+                                <select class="form-control" id="filterUserAuthor" name="authorId">
+                                    <option value="">-- All --</option>
+                                    @foreach (var item in (List<web_blog.Data.ApplicationUser>)ViewBag.Users)
+                                    {
+                                        if (@item.Id == filter.authorId)
+                                        {
+                                            <option value="@item.Id" selected>@item.FirstName @item.LastName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Id">@item.FirstName @item.LastName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="filterUserSortBy">SortBy</label>
+                                        <select class="form-control" id="filterUserSortBy" name="orderBy">
+                                            @if (filter.orderBy == "title")
+                                            {
+                                                <option value="date">Date</option>
+                                                <option value="title" selected>Title</option>
+
+                                            }
+                                            else if (filter.orderBy == "date")
+                                            {
+                                                <option value="title">Title</option>
+                                                <option value="date" selected>Date</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="date">Title</option>
+                                                <option value="title">Date</option>
+                                            }
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="filterUserSortOrder">SortOrder</label>
+                                        <select class="form-control" id="filterUserSortOrder" name="sortOrder">
+                                            @if (filter.sortOrder == "asc")
+                                            {
+                                                <option value="asc" selected>ASC</option>
+                                                <option value="desc">DESC</option>
+                                            }
+                                            else if (filter.sortOrder == "desc")
+                                            {
+                                                <option value="asc">ASC</option>
+                                                <option value="desc" selected>DESC</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="desc">DESC</option>
+                                                <option value="asc">ASC</option>
+                                            }
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="form-group">
+                                <button type="submit" class="btn btn-dark" id="btnFilterUser">Filter</button>
+
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="col-lg-12">
+                <div class="sidebar-item recent-posts">
+                    <div class="sidebar-heading">
+                        <h2>Recent Posts</h2>
+                    </div>
+                    <div class="content">
+                        <ul>
+                            @foreach(var post in (List<web_blog.Data.Post>)ViewBag.Posts)
+                            {
+                                <li>
+                                    <a asp-controller="Home" asp-action="GetPost" asp-route-id="@post.Id">
+                                        <h5 class="word-wrap: break-word;">@post.Title</h5>
+                                        <span>@post.CreatedOn.ToString("MMMM d, yyyy hh:mm tt")</span>
+                                    </a>
+                                </li>
+
+                            }
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+
+                <div class="sidebar-item categories">
+                    <div class="sidebar-heading">
+                        <h2>Categories</h2>
+                    </div>
+                    <div class="content">
+                        <ul>
+                            @foreach (var user in (List<web_blog.Data.ApplicationUser>)ViewBag.Users)
+                            {
+
+                                <li><a href="#">@user.FirstName @user.LastName</a></li>
+                            }
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+        //var btnFilterUser = document.getElementById("btnFilterUser");
+        //btnFilterUser.addEventListener("click", function () {
+        //    alert("ngon do");
+        //}
+
+    //$(document).ready(function () {
+    //        $('#btnFilterUser').on('click', function () {
+
+    //        var categoryId = $('#filterUserCategory').val();
+    //        var authorId = $('#filterUserAuthor').val();
+    //        var orderBy = $('#filterUserSortBy').val();
+    //        var sortOrder = $('#filterUserSortOrder').val();
+
+    //        $.ajax({
+    //            type: 'GET', 
+    //            url: '/Home/Index', 
+    //                data: {
+    //                    categoryId: categoryId,
+    //                    authorId: authorId,
+    //                    orderBy: orderBy,
+    //                    sortOrder: sortOrder
+    //                },
+    //            success: function (result) {
+    //                $('#filteredDataContainer').html(result);
+    //            },
+    //            error: function (error) {
+    //                console.log(error);
+    //            }
+    //        });
+    //    });
+    //});
+</script>
+}
